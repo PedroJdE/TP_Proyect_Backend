@@ -1,8 +1,9 @@
-import serverError from '../utils/serverError.js';
+import serverError from '../helpers/serverError.helper.js';
 import Workspace from '../models/workspace.model.js';
-import WorkspaceMember from '../models/workspaceMember.model.js';
+import WorkspaceMember from '../models/workspaceMembers.model.js';
 import workspaceRepository from '../repositories/workspace.repository.js';
-import workspaceMemberRepository from '../repositories/workspaceMember.repository.js';
+import workspaceMembersRepository from '../repositories/workspaceMembers.repository.js';
+
 
 function workspaceMiddlewareFactory(valid_roles = []) {
     return async function (request, response, next){
@@ -19,7 +20,7 @@ function workspaceMiddlewareFactory(valid_roles = []) {
                 throw new serverError(404, 'Workspace not found');
             }
 
-            const membership = await workspaceMemberRepository.findByUserIdAndWorkspaceId(user_id, workspace_id);
+            const membership = await workspaceMembersRepository.findByUserIdAndWorkspaceId(user_id, workspace_id);
             if (!membership) {
                 throw new serverError(403, 'You are not a member of this workspace');
             }

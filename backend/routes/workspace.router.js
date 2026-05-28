@@ -2,6 +2,9 @@ import express from 'express';
 
 import authMiddleware from '../src/middlewares/auth.middleware.js';
 import workspaceController from '../controllers/workspace.controller.js';
+import workspaceMiddleware from '../src/middlewares/workspace.middleware.js';
+import { MEMBER_WORKSPACE_ROLES } from '../src/constants/memberRoles.constant.js';
+
 
 const workspaceRouter = express.Router();
 
