@@ -19,6 +19,15 @@ authRouter.post(
     authController.login
 )
 
+authRouter.post(
+    '/request-password-reset',
+    authController.requestPasswordReset
+)
+
+authRouter.post(
+    '/reset-password',
+    authController.ResetPasswordConfirm
+)
 export default authRouter;
 /* 
 

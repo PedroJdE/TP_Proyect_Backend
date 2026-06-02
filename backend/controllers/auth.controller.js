@@ -176,8 +176,108 @@ class AuthController {
             }
         }
     }
-}
 
+    async requestPasswordReset(request, response) {
+        try {
+            const { email } = request.body;
+
+            if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+                throw new ServerError("Email inválido", 400);
+            }
+
+            const user = await userRepository.getByEmail(email);
+
+            if (!user) {
+                return response.status(200).json({
+                    ok: true,
+                    status: 200,
+                    message: "Si el correo existe, se enviaron instrucciones"
+                });
+            }
+
+            const resetToken = jwt.sign({ email }, ENVIRONMENT.JWT_SECRET);
+            const resetLink =
+                `${ENVIRONMENT.FRONTEND_URL}/reset-password/${resetToken}`;
+
+                await transporter.sendMail({
+                    from: ENVIRONMENT.EMAIL_USER,
+                    to: email,
+                    subject: "Restablecimiento de contraseña",
+                    html: `
+                        <h2>Recuperación de contraseña</h2>
+                        <p>Recibimos una solicitud para restablecer tu contraseña.</p>
+                        <p>
+                            <a href="${resetLink}">
+                                Restablecer contraseña
+                            </a>
+                        </p>
+                        <p>Utiliza este enlace para restablecer tu contraseña.</p>
+                        <p>Si no solicitaste este cambio, ignora este correo.</p>
+                    `
+                });
+            return response.status(200).json({
+                ok: true,
+                status: 200,
+                message: "Instrucciones de restablecimiento de contraseña enviadas"
+            });
+        } catch (error) {
+            if (error instanceof ServerError) {
+                return response.status(error.status).json({
+                    message: error.message,
+                    ok: false,
+                    status: error.status
+                });
+            } else {
+                console.error('Error critico:', error);
+                return response.status(500).json({
+                    message: "Error interno del servidor",
+                    ok: false,
+                    status: 500
+                });
+            }
+        }
+    }
+
+    async ResetPasswordConfirm(request, response) {
+        try {
+            const { resetToken, newPassword } = request.body;
+            if (!resetToken) {
+                throw new ServerError("Token de restablecimiento requerido", 400);
+            }
+            if (!newPassword || newPassword.length < 8) {
+                throw new ServerError("Contraseña invalida", 400);
+            }
+            const decoded = jwt.verify(resetToken, ENVIRONMENT.JWT_SECRET);
+            const { email } = decoded;
+            const user = await userRepository.getByEmail(email);
+            if (!user) {
+                throw new ServerError("Usuario no encontrado", 404);
+            }
+            user.password = await bcrypt.hash(newPassword, 10);
+            await userRepository.updateUser(user._id, { password: user.password });
+            return response.status(200).json({
+                ok: true,
+                status: 200,
+                message: "Contraseña restablecida exitosamente"
+            });
+        } catch (error) {
+            if (error instanceof ServerError) {
+                return response.status(error.status).json({
+                    message: error.message,
+                    ok: false,
+                    status: error.status
+                });
+            } else {
+                console.error('Error critico:', error);
+                return response.status(500).json({
+                    message: "Error interno del servidor",
+                    ok: false,
+                    status: 500
+                });
+            }
+        }
+    }
+}
 
 
 
