@@ -199,22 +199,22 @@ class AuthController {
             const resetLink =
                 `${ENVIRONMENT.FRONTEND_URL}/reset-password/${resetToken}`;
 
-                await transporter.sendMail({
-                    from: ENVIRONMENT.EMAIL_USER,
-                    to: email,
-                    subject: "Restablecimiento de contraseña",
-                    html: `
-                        <h2>Recuperación de contraseña</h2>
-                        <p>Recibimos una solicitud para restablecer tu contraseña.</p>
-                        <p>
-                            <a href="${resetLink}">
-                                Restablecer contraseña
-                            </a>
-                        </p>
-                        <p>Utiliza este enlace para restablecer tu contraseña.</p>
-                        <p>Si no solicitaste este cambio, ignora este correo.</p>
-                    `
-                });
+            await mailer_transport.sendMail({
+                from: ENVIRONMENT.EMAIL_USER,
+                to: email,
+                subject: "Restablecimiento de contraseña",
+                html: `
+                    <h2>Recuperación de contraseña</h2>
+                    <p>Recibimos una solicitud para restablecer tu contraseña.</p>
+                    <p>
+                        <a href="${resetLink}">
+                            Restablecer contraseña
+                        </a>
+                    </p>
+                    <p>Utiliza este enlace para restablecer tu contraseña.</p>
+                    <p>Si no solicitaste este cambio, ignora este correo.</p>
+                `
+            });
             return response.status(200).json({
                 ok: true,
                 status: 200,

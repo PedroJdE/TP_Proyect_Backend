@@ -8,8 +8,10 @@ const environment = {
     MODE: process.env.MODE,
     GMAIL_USERNAME: process.env.GMAIL_USERNAME,
     GMAIL_PASSWORD: process.env.GMAIL_PASSWORD,
+    EMAIL_USER: process.env.EMAIL_USER || process.env.GMAIL_USERNAME,
     JWT_SECRET: process.env.JWT_SECRET,
-    URL_BACKEND: process.env.URL_BACKEND || 'http://localhost:3000'
+    URL_BACKEND: process.env.URL_BACKEND || 'http://localhost:3000',
+    FRONTEND_URL: process.env.FRONTEND_URL || process.env.URL_BACKEND || 'http://localhost:3000'
 };
 console.log("Environment variables loaded:", environment);
 export default environment;
