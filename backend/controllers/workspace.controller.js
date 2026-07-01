@@ -370,6 +370,8 @@ class WorkspaceController {
                 normalizedRole || MEMBER_WORKSPACE_ROLES.USER
             );
 
+            let mailSent = true;
+            let mailError = null;
             try {
                 const workspace = await workspaceRepository.getById(workspace_id);
                 const mailTemplate = buildWorkspaceInvitationEmail({
@@ -385,8 +387,18 @@ class WorkspaceController {
                     subject: mailTemplate.subject,
                     html: mailTemplate.html
                 });
-            } catch (mailError) {
-                console.error('Error enviando invitación por mail:', mailError);
+            } catch (mailErrorInfo) {
+                mailSent = false;
+                mailError = mailErrorInfo?.message || 'No se pudo enviar el correo';
+                console.error('Error enviando invitación por mail:', mailErrorInfo);
+                console.error('Detalles del mail:', {
+                    from: ENVIRONMENT.EMAIL_USER || ENVIRONMENT.GMAIL_USERNAME,
+                    to: userToInvite.email,
+                    workspace_id,
+                    message: mailErrorInfo?.message,
+                    code: mailErrorInfo?.code,
+                    response: mailErrorInfo?.response
+                });
             }
 
             const generalChannel = await channelRepository.findByWorkspaceId(workspace_id);
@@ -400,8 +412,12 @@ class WorkspaceController {
 
             return response.status(200).json({
                 ok: true,
-                message: "Invitación enviada con éxito",
-                data: { invitedMember },
+                message: mailSent ? "Invitación procesada" : "La invitación fue creada, pero no se pudo enviar el correo",
+                data: {
+                    invitedMember,
+                    mailSent,
+                    ...(mailError ? { mailError } : {})
+                },
                 status: 200
             });
         } catch (error) {
