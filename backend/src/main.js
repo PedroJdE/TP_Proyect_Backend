@@ -28,11 +28,18 @@ import workspaceRouter from "../routes/workspace.router.js";
 const app = express();
 
 // Configurar CORS
-const allowedFrontendOrigins = [environment.FRONTEND_URL, 'http://localhost:5174', 'http://localhost:5173'];
+const allowedFrontendOrigins = new Set([
+    environment.FRONTEND_URL,
+    'http://localhost:5174',
+    'http://localhost:5173',
+    'https://tp-workspaces-frontend.vercel.app'
+].filter(Boolean));
+
 const corsOptions = {
     origin: (origin, callback) => {
+        const normalizedOrigin = origin?.replace(/\/+$/, '');
         // permitir requests sin origin (tools, curl) o desde orígenes permitidos
-        if (!origin || allowedFrontendOrigins.includes(origin)) {
+        if (!origin || allowedFrontendOrigins.has(normalizedOrigin)) {
             callback(null, true);
         } else {
             callback(new Error('CORS policy: origin not allowed'));
