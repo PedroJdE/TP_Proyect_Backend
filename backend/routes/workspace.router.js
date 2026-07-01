@@ -14,6 +14,40 @@ workspaceRouter.post('/', workspaceController.create);
 
 workspaceRouter.get('/', workspaceController.getAllByUser);
 
+// Invitar miembro a workspace
+workspaceRouter.get(
+    '/:workspace_id/members',
+    workspaceMiddleware([]),
+    workspaceController.getWorkspaceMembers
+);
+
+workspaceRouter.get(
+    '/:workspace_id/channels/:channel_id/members',
+    workspaceMiddleware([]),
+    workspaceController.getChannelMembers
+);
+
+workspaceRouter.get(
+    '/:workspace_id/channels',
+    workspaceMiddleware([]),
+    workspaceController.getWorkspaceChannels
+);
+
+workspaceRouter.post(
+    '/:workspace_id/channels',
+    workspaceMiddleware([]),
+    workspaceController.createChannel
+);
+
+// NUEVO: editar un canal existente
+workspaceRouter.put(
+    '/:workspace_id/channels/:channel_id',
+    workspaceMiddleware([MEMBER_WORKSPACE_ROLES.ADMIN, MEMBER_WORKSPACE_ROLES.OWNER]),
+    workspaceController.updateChannel
+);
+
+workspaceRouter.post('/:workspace_id/invite', workspaceController.inviteMember);
+
 workspaceRouter.delete(
     '/:workspace_id', 
     workspaceMiddleware([MEMBER_WORKSPACE_ROLES.OWNER]),

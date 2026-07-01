@@ -3,6 +3,9 @@ import User from "./models/user.model.js";
 import express from "express";
 import dns from 'dns';
 import authMiddleware from "./middlewares/auth.middleware.js";
+import cors from 'cors';
+import messageRouter from '../routes/message.router.js'
+
 
 console.log(environment.MONGO_DB_CONNECTION_STRING);
 console.log(environment.MONGO_DB_NAME);
@@ -23,6 +26,25 @@ import WorkspaceMember from "./models/workspaceMembers.model.js";
 import workspaceRouter from "../routes/workspace.router.js";
 
 const app = express();
+
+// Configurar CORS
+const allowedFrontendOrigins = [environment.FRONTEND_URL, 'http://localhost:5174', 'http://localhost:5173'];
+const corsOptions = {
+    origin: (origin, callback) => {
+        // permitir requests sin origin (tools, curl) o desde orígenes permitidos
+        if (!origin || allowedFrontendOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('CORS policy: origin not allowed'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
+
 // Middleware
 app.use(express.json());
 
@@ -30,6 +52,8 @@ app.use(express.json());
 app.use('/api/auth', authRouter);
 
 app.use('/api/workspace', workspaceRouter);
+
+app.use('/api/channels', messageRouter)
 
 const PORT = environment.PORT || 3000;
 // Start server

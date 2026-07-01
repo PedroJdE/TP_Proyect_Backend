@@ -7,7 +7,7 @@ class WorkspaceMembersRepository {
         return await WorkspaceMember.create({
             fk_workspace_id: workspace_id,
             fk_user_id: user_id,
-            role: role
+            rol: role
         });
     }
 
@@ -52,8 +52,8 @@ class WorkspaceMembersRepository {
             .populate(
                 {
                     path:  'fk_workspace_id', //Propiedad a expandir
-                    select: 'nombre descripcion estado', //Propiedades que seleccionamos del dato expandido
-                    match: {estado: true} //Condicion
+                    select: 'nombre descripcion activo', //Propiedades que seleccionamos del dato expandido
+                    match: {activo: true} //Condicion
                 }
             );
 
@@ -69,6 +69,38 @@ class WorkspaceMembersRepository {
                 workspace_nombre: membership.fk_workspace_id.nombre,
                 workspace_descripcion: membership.fk_workspace_id.descripcion
             }));
+    }
+
+    async findByUserIdAndWorkspaceId(user_id, workspace_id) {
+        return await WorkspaceMember.findOne({
+            fk_workspace_id: workspace_id,
+            fk_user_id: user_id
+        });
+    }
+
+    async getMembership(workspace_id, user_id) {
+        return await WorkspaceMember.findOne({
+            fk_workspace_id: workspace_id,
+            fk_user_id: user_id
+        });
+    }
+
+    async inviteMember(workspace_id, user_id, rol) {
+        const existingMembership = await this.getMembership(workspace_id, user_id);
+        if (existingMembership) {
+            if (existingMembership.estado_invitacion === 'pendiente') {
+                throw new Error('Ya existe una invitación pendiente para este usuario en este espacio de trabajo');
+            }
+        }
+        return await this.create(workspace_id, user_id, rol);
+    }
+
+    async acceptInvitation(workspace_member_id) {
+        await WorkspaceMember.findByIdAndUpdate(workspace_member_id, { estado_invitacion: 'aceptada' });
+    }
+
+    async rejectInvitation(workspace_member_id) {
+        await WorkspaceMember.findByIdAndUpdate(workspace_member_id, { estado_invitacion: 'rechazada' });
     }
 }
 

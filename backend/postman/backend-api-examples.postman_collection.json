@@ -1,0 +1,149 @@
+{
+  "info": {
+    "name": "TP Backend API - Ejemplos",
+    "description": "Colección adicional con ejemplos listos para probar endpoints del backend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "workspaceId",
+      "value": "64f1a2b3c4d5e6f7890abcde",
+      "type": "string"
+    },
+    {
+      "key": "channelId",
+      "value": "64f1a2b3c4d5e6f7890abcdf",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Login con usuario demo",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"juan@example.com\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json && json.data && json.data.access_token) {",
+              "  pm.collectionVariables.set('accessToken', json.data.access_token);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Crear workspace ejemplo",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Equipo Demo\",\n  \"descripcion\": \"Workspace preparado para pruebas\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/workspace",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "workspace"]
+        }
+      }
+    },
+    {
+      "name": "3. Invitar miembro a workspace",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"invitado@example.com\",\n  \"rol\": \"USER\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/workspace/{{workspaceId}}/invite",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "workspace", "{{workspaceId}}", "invite"]
+        }
+      }
+    },
+    {
+      "name": "4. Crear canal ejemplo",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"General\",\n  \"descripcion\": \"Canal principal\",\n  \"memberIds\": []\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/workspace/{{workspaceId}}/channels",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "workspace", "{{workspaceId}}", "channels"]
+        }
+      }
+    },
+    {
+      "name": "5. Enviar mensaje ejemplo",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"content\": \"Hola, este mensaje fue enviado desde Postman\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/channels/{{channelId}}/messages",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "channels", "{{channelId}}", "messages"]
+        }
+      }
+    },
+    {
+      "name": "6. Obtener mensajes del canal",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/api/channels/{{channelId}}/messages",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "channels", "{{channelId}}", "messages"]
+        }
+      }
+    }
+  ]
+}

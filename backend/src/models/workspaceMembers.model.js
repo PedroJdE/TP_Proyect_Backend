@@ -23,6 +23,11 @@ const workspaceMemberSchema = new mongoose.Schema({
         enum: [MEMBER_WORKSPACE_ROLES.ADMIN, MEMBER_WORKSPACE_ROLES.OWNER, MEMBER_WORKSPACE_ROLES.USER],
         type: String,
         default: MEMBER_WORKSPACE_ROLES.USER
+    },
+    estado_invitacion: {
+        enum: ['pendiente', 'aceptada', 'rechazada'],
+        type: String,
+        default: 'pendiente'
     }
 });
 
