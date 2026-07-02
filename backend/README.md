@@ -26,7 +26,7 @@ La aplicación permite que múltiples usuarios trabajen de forma colaborativa de
 
 El sistema implementa autenticación mediante **JWT**, verificación de cuentas por correo electrónico y un mecanismo de invitaciones para incorporar nuevos usuarios a los distintos espacios de trabajo.
 
-La arquitectura del proyecto fue desarrollada siguiendo una separación por capas (Controllers, Services, Repositories y Models), facilitando su mantenimiento, escalabilidad y reutilización.
+La arquitectura del proyecto fue desarrollada siguiendo una separación por capas (Controllers, Services, Repositories, Models, Middlewares, helpers, routes, config y constants), facilitando su mantenimiento, escalabilidad y reutilización.
 
 ---
 
