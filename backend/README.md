@@ -18,6 +18,46 @@
 
 ---
 
+## Para correr en local
+
+📦 Instalación completa (Backend + Frontend)
+# =========================
+# BACKEND
+# =========================
+
+git clone https://github.com/PedroJdE/TP_Proyect_Backend
+cd TP_Proyect_Backend
+npm install
+
+# crear archivo .env y configurar variables:
+# PORT=3000
+# MONGO_DB_CONNECTION_STRING=tu_conexion_mongo
+# MONGO_DB_NAME=tu_db
+# MODE=development
+# JWT_SECRET=tu_secret
+# GMAIL_USERNAME=tu_email@gmail.com
+# GMAIL_PASSWORD=tu_password
+# EMAIL_USER=tu_email@gmail.com
+
+npm run dev
+
+
+# =========================
+# FRONTEND
+# =========================
+
+cd ..
+git clone https://github.com/PedroJdE/TP-workspaces-Frontend
+cd TP-workspaces-Frontend
+npm install
+
+# crear archivo .env:
+# VITE_API_URL=https://tp-proyect-backend.vercel.app
+
+npm run dev
+
+---
+
 ## Descripción
 
 **TP Workspaces** es una API REST desarrollada con **Node.js**, **Express** y **MongoDB** que implementa el backend de una plataforma colaborativa inspirada en aplicaciones como Slack y Microsoft Teams.
